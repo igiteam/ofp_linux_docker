@@ -1,0 +1,44 @@
+name: Deploy OFP Linux Server
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "OFP Server Version (1.96, 1.99, 2.01)"
+        required: true
+        type: string
+
+jobs:
+  Build:
+    name: Deploy OFP Server
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux
+    permissions:
+      contents: read
+      packages: read
+    environment: "Release"
+
+    steps:
+      - name: Run
+        run: |
+          pacman -Sy --needed --noconfirm sudo fakeroot debugedit git pacman-contrib openssh wget
+          useradd builduser -m
+          mkdir /pkgbuild
+          chown -R $(id -u builduser) /pkgbuild
+          passwd -d builduser
+
+          mkdir /home/builduser/.ssh
+          echo "${{ secrets.ARCH_SSH_KEY }}" > /home/builduser/.ssh/id_ed25519
+          chmod 600 /home/builduser/.ssh/id_ed25519
+          chown -R $(id -u builduser):$(id -g builduser) /home/builduser/.ssh
+
+          cd /pkgbuild
+          su builduser sh -c "
+            git clone https://aur.archlinux.org/ofp-server-bin.git .
+            sed -i 's/^pkgver=.*/pkgver=${{ inputs.version }}/' PKGBUILD
+            updpkgsums
+            makepkg --printsrcinfo > .SRCINFO
+
+            cat PKGBUILD
+            cat .SRCINFO
+          "

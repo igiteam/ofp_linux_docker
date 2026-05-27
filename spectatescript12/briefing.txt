@@ -1,0 +1,45 @@
+
+<! --- --------------------------------------------------->
+<! --- Put this into the "Notes" section (Main)           >
+<! --- --------------------------------------------------->
+
+
+
+<h4>
+Uses the <a href="#spectateinfo">Spectating script v1.2</a>
+</h4>
+
+
+
+<! --- --------------------------------------------------->
+<! ---  Put this after some other section                 >
+<! --- (For example just before the </body> tag)          >
+<! --- --------------------------------------------------->
+
+
+
+<hr>
+<h2><a name="spectateinfo">Spectating Script v1.2</a></h2>
+<h4>
+The spectating script allows you to spectate other players after you die instead of flying around as a seagull.
+</h4><br>
+<h4>
+The script UI appears after you die, and its rather simple to use. You can cycle between spectated objects using
+the arrows at the bottom right, or use the namelist menu accessible from the top right. The name of the currently spectated 
+object is displayed at the bottom left. The view menu can be accessed from the "view menu" button from top left of the 
+screen, from where you can cycle between different camera views and adjust the camera distance.
+</h4><br>
+<h4>
+Pressing esc will close the spectating dialog and take you to the old seagull mode, from which you can get back to
+spectating by flying above 150 meters.
+</h4><br>
+<h5>
+by Kegetys of LDD Kyllikki
+</h5>
+<h5>
+http://ofp.kege.cjb.net
+</h5>
+<h5>
+http://kyllikki.tiimipeli.net
+</h5>
+<hr>

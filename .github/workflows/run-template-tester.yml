@@ -1,0 +1,73 @@
+name: Run Tool - OFP Template Tester
+on:
+  repository_dispatch:
+    types:
+      - ofp-template-tester
+
+jobs:
+  run-tester:
+    name: Test OFP Templates
+    runs-on: ["template-tester", "${{ matrix.arch }}", "${{ matrix.os }}"]
+    permissions:
+      packages: read
+
+    strategy:
+      matrix:
+        template: ${{ github.event.client_payload.templates }}
+        arch: [x64, arm64]
+        os: [linux]
+      fail-fast: false
+
+    steps:
+      - name: Download assets
+        uses: actions/download-artifact@v4
+        with:
+          name: ofp-tool-binaries
+          run-id: "${{ github.event.client_payload.run_id }}"
+          github-token: ${{ secrets.ACCESS_DOWNLOAD_PAT }}
+
+      - name: Install global deps
+        if: ${{ ! endsWith(matrix.template, '-docker') }}
+        run: |
+          sudo bash -c "\
+            apt-get update && \
+            apt-get install -y dirmngr gnupg apt-transport-https ca-certificates software-properties-common curl && \
+            apt-get update && \
+            apt-get install -y wget build-essential zip unzip tar git xz-utils
+          "
+
+      - name: Install x64 deps for OFP
+        if: matrix.arch == 'x64' && !endsWith(matrix.template, '-docker')
+        run: |
+          sudo bash -c "\
+            dpkg --add-architecture i386 && \
+            apt update && \
+            apt install -y lib32stdc++6 lib32gcc-s1 lib32z1
+          "
+
+      - name: Create pufferpanel group
+        run: |
+          getent group pufferpanel || sudo groupadd pufferpanel
+          sudo usermod -a -G pufferpanel $USER
+
+      - name: Setup AppArmor for OFP
+        if: ${{ ! endsWith(matrix.template, '-docker') }}
+        run: |
+          echo -e "abi <abi/3.0>, \ninclude <tunables/global> \n$(pwd)/ofp-tester_${{ matrix.arch }} flags=(unconfined) {\n}" | sudo tee /etc/apparmor.d/ofp-tester
+          echo -e "abi <abi/3.0>, \ninclude <tunables/global> \n$(pwd)/pufferpanel_${{ matrix.arch }} flags=(unconfined) {\n}" | sudo tee /etc/apparmor.d/pufferpanel
+          sudo apparmor_parser -r /etc/apparmor.d/ofp-tester
+          sudo apparmor_parser -r /etc/apparmor.d/pufferpanel
+
+      - name: Run OFP template test
+        run: |
+          chmod +x pufferpanel_* ofp-tester_*
+          rm -rf ofp-test-rundir
+          mkdir -p ofp-test-rundir
+          ./ofp-tester_${{ matrix.arch }} --skip=* --require=${{ matrix.template }} --binary=$(pwd)/pufferpanel_${{ matrix.arch }} --workDir=$(pwd)/ofp-test-rundir
+
+      - name: Cleanup
+        if: ${{ ! endsWith(matrix.template, '-docker') }}
+        run: |
+          sudo apparmor_parser -R /etc/apparmor.d/ofp-tester
+          sudo apparmor_parser -R /etc/apparmor.d/pufferpanel
+          sudo rm -f /etc/apparmor.d/ofp-tester /etc/apparmor.d/pufferpanel

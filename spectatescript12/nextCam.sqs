@@ -1,0 +1,34 @@
+; 
+; Script for the spectating script v1.2 by Kegetys <Kegetys@dnainternet.net> 
+; http://www.ofp.kege.cjb.net
+;
+
+_tries = 0
+_DeathCamIndex = DeathCamIndex
+
+#notalive
+_DeathCamIndex = _DeathCamIndex + _this
+
+? _this == 0 : goto "alive"
+
+? _DeathCamIndex < 0 : _DeathCamIndex = (count DeathCamArray)-1
+? _DeathCamIndex >= count DeathCamArray : _DeathCamIndex = 0
+
+? alive (DeathCamArray select _DeathCamIndex) : goto "alive"
+
+_tries = _tries + 1
+
+; Avoid infinite loop if everyone are dead
+? _tries < (count DeathCamArray)+1 : goto "notalive"
+
+exit
+
+#alive
+
+DeathCamIndex = _DeathCamIndex
+lbSetCurSel [1047002, DeathCamIndex] 
+_name = name (DeathCamArray select DeathCamIndex)
+if (_name == "error: no unit") then {_name = ""}
+ctrlSetText [116969,_name]
+
+DeathCamCurTarget = (DeathCamArray select DeathCamIndex)

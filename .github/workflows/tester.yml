@@ -1,0 +1,77 @@
+name: Build Tool - OFP Tester
+on:
+  workflow_dispatch:
+    inputs:
+      no-run-tool:
+        description: "Skips running of the tool"
+        default: false
+        required: true
+        type: boolean
+
+jobs:
+  build-tool:
+    name: Build OFP Tester Tool
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: Download Go modules
+        run: |
+          go mod download
+
+      - name: Download APT packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install --download-only -y gcc-aarch64-linux-gnu
+
+      - name: APT Install
+        run: |
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Prep
+        run: |
+          mkdir build-artifacts
+
+      - name: Build AMD64
+        run: |
+          go build -o build-artifacts/ofp-server_x64 -v github.com/igiteam/ofp-server/cmd
+          go build -o build-artifacts/ofp-tester_x64 -v github.com/igiteam/ofp-server/tools/templatetester
+        env:
+          GOOS: linux
+          GOARCH: amd64
+
+      - name: Build ARM64
+        run: |
+          go build -o build-artifacts/ofp-server_arm64 -v github.com/igiteam/ofp-server/cmd
+          go build -o build-artifacts/ofp-tester_arm64 -v github.com/igiteam/ofp-server/tools/templatetester
+        env:
+          GOOS: linux
+          GOARCH: arm64
+          CC: aarch64-linux-gnu-gcc
+          CGO_ENABLED: 1
+
+      - name: Generate job artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ofp-tool-binaries
+          path: build-artifacts/
+          if-no-files-found: error
+
+      - name: Get templates
+        run: |
+          build-artifacts/ofp-tester_x64 --print
+
+      - name: Trigger tests
+        id: trigger
+        if: ${{ ! inputs.no-run-tool }}
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          event-type: ofp-template-tester
+          client-payload: '{ "templates": [ ${{ env.TEMPLATES }} ], "run_id": "${{ github.run_id }}" }'

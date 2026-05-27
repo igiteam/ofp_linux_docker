@@ -1,0 +1,186 @@
+; 
+; Spectating script v1.2 by Kegetys <Kegetys@dnainternet.net> 
+; http://www.ofp.kege.cjb.net
+;
+; Requires OFP Version 1.85 or up
+;
+
+
+;
+; Change DeathCamArray values to spectateable objects
+; Remember to use driver/gunner/commander if you want to spectate the player driving/gunning/commanding a vehicle if he exits it
+; you can also put AI controlled units and objective vehicles/buildings here.
+;
+
+DeathCamArray = [p1,p2,p3,driver p4]
+
+
+
+
+
+DeathCamArrayTemp = []
+"if ((not isNull _x) and (alive _x)) then {DeathCamArrayTemp = DeathCamArrayTemp + [_x]}" foreach DeathCamArray
+
+DeathCamArray = DeathCamArrayTemp
+
+DeathCamNameCache = []
+"if (name _x == ""error: no unit"") then {DeathCamNameCache = DeathCamNameCache + [""object""]} else {DeathCamNameCache = DeathCamNameCache + [name _x]}" foreach DeathCamArray
+
+
+
+_seagull = _this select 2
+_seagull setpos[0,0,0]
+
+DeathCamCurCamTarget = "HeliHEmpty" CreateVehicle getpos player
+_HeightDummy = "HeliHEmpty" CreateVehicle getpos player
+
+~2.5
+titleCut ["","BLACK OUT", 1.5]
+~2
+titleCut ["","BLACK IN", 4]
+
+? count DeathCamArray == 0 : _vhltemp = player
+? count DeathCamArray == 0 : goto "seagull"
+
+DeathCamCineViewSpecial = 0
+DeathCamComSpeed = 0.4
+DeathCamRelPos = [0,-2,0.3]
+DeathCamTarHeight = 1.7
+DeathCamIndex = 0
+
+DeathCamCurTarget = player
+DeathCam = "camera" camCreate [(getpos player select 0)+2, (getpos player select 1)+2, 700 ]
+DeathCam cameraEffect ["internal","front"]
+DeathCam camSetTarget vehicle DeathCamCurCamTarget
+DeathCam camSetPos [(getpos player select 0)+2, (getpos player select 1)+2, 1000 ]
+DeathCam camSetFOV 0.976
+DeathCam camCommand "inertia on"
+DeathCam camCommit 0
+showCinemaBorder false
+
+
+
+#start
+
+_ok = createDialog "DlgSpectateDeath"
+ctrlShow [1046001,false];ctrlShow [1046002,false];ctrlShow [1046003,false];ctrlShow [1046004,false];ctrlShow [1046005,false];ctrlShow [1046006,false];ctrlShow [1046007,false];ctrlShow [1046008,true];ctrlShow [1046009,false];ctrlShow [1046010,false];ctrlShow [1046011,false];ctrlShow [1046012,false];ctrlShow [1046013,false];ctrlShow [1046014,false];ctrlShow [1046015,false];ctrlShow [1046016,false];ctrlShow [1046017,false];ctrlShow [1046018,false];ctrlShow [1046019,false]
+ctrlSetText [116969,name player]
+ctrlShow [1047002,false];ctrlShow [1047001,false];ctrlShow [1048001,false]
+
+sliderSetRange [1046010, 0.2, 7] 
+sliderSetPosition [1046010, 1] 
+
+
+kegfoo = 0
+"_i = lbAdd [1047002, DeathCamNameCache select kegfoo];lbSetData [1047002, _i, format[""%1"",kegfoo]];if (side _x == west) then {lbSetColor[1047002, _i, [0.8,0.8,1,0.8]]};if (side _x == EAST) then {lbSetColor[1047002, _i, [1,0.8,0.8,0.8]]};if (side _x == resistance) then {lbSetColor[1047002, _i, [0.8,1,0.8,0.8]]};if ((name _x == ""error: no unit"") and ((DeathCamNameCache select kegfoo) == ""object"")) then {lbSetColor[1047002, _i, [0,0,0,0.4]]};kegfoo = kegfoo + 1" foreach DeathCamArray
+lbSetCurSel [1047002, 0] 
+
+kegfoo = 0
+"if (player == _x) then {lbSetCurSel [1047002, kegfoo] };kegfoo = kegfoo + 1;" foreach DeathCamArray
+
+
+
+? not _ok : exit
+
+#loop
+kegfoo = 0
+"if (not alive _x) then {lbSetColor[1047002, kegfoo, [0,0,0,0.4]]};kegfoo = kegfoo + 1" foreach DeathCamArray
+
+? lbData[1047002,(lbCurSel 1047002)] != format["%1",DeathCamIndex] : _TargetChange = 1
+
+? _TargetChange == 1 : DeathCamIndex = lbCurSel 1047002
+? (_TargetChange == 1) and (dialog): 0 exec "nextCam.sqs"
+_TargetChange = 0
+
+_seagull setpos[0,0,(getpos _vhlTemp select 2)+15]
+? !dialog : goto "seagull"
+
+DeathCam camCommit DeathCamComSpeed
+_vhlTemp = vehicle DeathCamCurTarget
+
+; Cinematic view?
+? DeathCamCineViewSpecial == 1 : goto "camspecial"
+
+
+; The following will reduce the effect of warping spectated object to the camera itself
+
+_Divider = 100 - (speed _vhlTemp * 2)
+? _Divider < 10 : _Divider = 10
+
+_moX = (getpos DeathCamCurCamTarget select 0) + (((getpos _vhlTemp select 0) - (getpos DeathCamCurCamTarget select 0))/_Divider)
+_moY = (getpos DeathCamCurCamTarget select 1) + (((getpos _vhlTemp select 1) - (getpos DeathCamCurCamTarget select 1))/_Divider)
+_moZ = ((getpos DeathCamCurCamTarget select 2)-DeathCamTarHeight) + (((getpos _vhlTemp select 2) - ((getpos DeathCamCurCamTarget select 2)-DeathCamTarHeight))/_Divider)
+
+; Workaround for an ofp "feature" with the setpos/getpos commands and roadway lods
+_HeightDummy setpos [getpos _vhlTemp select 0,getpos _vhlTemp select 1,0]
+_h2 = _vhlTemp distance _HeightDummy
+_h1 = _h2 + DeathCamTarHeight
+? vehicle DeathCamCurTarget == DeathCamCurTarget : _moZ = ((_h1)-DeathCamTarHeight) + (((_h2) - ((_h1)-DeathCamTarHeight))/_Divider)
+
+
+DeathCamCurCamTarget setpos[_moX,_moY,_moZ  + DeathCamTarHeight]
+
+DeathCamCurCamTarget setdir getdir _vhlTemp
+
+; Top view?
+? DeathCamCineViewSpecial == 2 : goto "camspecialTop"
+
+_RealRelPos = [(DeathCamRelPos select 0) * (sliderPosition 1046010), (DeathCamRelPos select 1) * (sliderPosition 1046010), (DeathCamRelPos select 2) * ((sliderPosition 1046010)*2)]
+
+? ((speed vehicle DeathCamCurTarget >= 150)) : _RealRelPos = [(DeathCamRelPos select 0) * (sliderPosition 1046010) * 5, (DeathCamRelPos select 1) * (sliderPosition 1046010) * 5, (DeathCamRelPos select 2) * ((sliderPosition 1046010)*2) * 5]
+
+DeathCam camSetRelPos _RealRelPos 
+
+
+
+goto "loop"
+
+
+; Cinematic view
+#camspecial
+DeathCamCurCamTarget setpos[getpos _vhlTemp select 0,getpos _vhlTemp select 1,(getpos _vhlTemp select 2) + DeathCamTarHeight]
+DeathCamCurCamTarget setdir getdir _vhlTemp
+
+; Reset cam if object is far away... if its a very fast object use a more distant view
+? ((speed vehicle DeathCamCurTarget >= 150)) and (((DeathCam) distance (DeathCamCurCamTarget)) > 400) : DeathCam camSetRelPos [3,400.1,10.0]
+? ((speed vehicle DeathCamCurTarget < 150)) and (((DeathCam) distance (DeathCamCurCamTarget)) > 100) : DeathCam camSetRelPos DeathCamRelPos
+
+; Distance slider sets zoom (FOV) in cinematic view
+DeathCam camSetFOV 0.976 * ((sliderPosition 1046010)/5)
+
+goto "loop"
+
+; Top view
+#camspecialTop
+DeathCamCurCamTarget setdir 0
+
+DeathCam camSetPos [getpos DeathCamCurCamTarget select 0,getpos DeathCamCurCamTarget select 1,(getpos DeathCamCurCamTarget select 2)+(30 * sliderPosition 1046010 * 1.5)]
+
+goto "loop"
+
+
+; User pressed esc, return seagull control
+#seagull
+
+titleCut ["","BLACK IN", 0]
+_seagull setpos [0,0,0]
+
+_h = sqrt(((_vhlTemp distance _seagull) * (_vhlTemp distance _seagull)) - (sqrt(((getpos _vhlTemp select 0) * (getpos _vhlTemp select 0)) + ((getpos _vhlTemp select 1) * (getpos _vhlTemp select 1))) * sqrt(((getpos _vhlTemp select 0) * (getpos _vhlTemp select 0)) + ((getpos _vhlTemp select 1) * (getpos _vhlTemp select 1))))) + ((getpos _vhlTemp select 2)+15)
+? _h > 80 : _h = 80
+
+
+_seagull setpos [(getpos _vhlTemp select 0)-15+random 30, (getpos _vhlTemp select 1)-15+random 30,_h]
+
+_seagull setvelocity[0,0,0]
+_seagull switchCamera "INTERNAL"
+_seagull cameraEffect ["terminate","FRONT"]
+_seagull camCommand "manual on"
+
+; Return back to spectating
+@(getpos _seagull select 2) > 150
+
+titleCut ["","BLACK OUT", 0.5]
+~0.5
+titleCut ["","BLACK IN", 2]
+DeathCam cameraEffect ["internal","front"]
+goto "start"

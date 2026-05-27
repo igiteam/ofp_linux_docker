@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html><head>
+	<title>Kegetys' OFP site</title>
+	
+	<style>#tausta1 {
+ background: #4C5A6F url(tausta.jpg) no-repeat; 
+ height: 394px;
+ width: 784px;
+ top: 17px;
+ left: 0px;
+ position: absolute;
+}
+
+#whiteline {
+ background: #4C5A6F url(viiva.png) repeat-x; 
+ height: 70px;
+ width: 100%;
+ position: absolute;
+ left: 0px;
+ top: 17px;
+}
+
+#navi {
+ background: white; 
+ height: 15px;
+ width: 340px;
+ position: absolute;
+ left: 15px;
+ top: 72px;
+ color: black;
+ text-align: center;
+}
+
+#content {
+ position: absolute;
+ left: 100px;
+ top: 115px;
+ color: white;
+}
+
+#gad {
+ position: absolute;
+ left: 366px;
+ top: 72px;
+}</style>
+	<style>body { 
+ background: #4C5A6F;
+ font-family: Verdana, Arial, Helvetica, sans-serif;
+ font-size: 13px;
+ color: white;
+}
+
+#navi a {
+ color: black;
+ text-decoration: none;
+ font-size: 14px;
+}
+
+#navi a:hover {
+ background: #39445B; 
+ color: white;
+ text-decoration: none;
+}
+
+p {
+ color: white;
+}
+
+h1 {
+ margin-left: 100px;
+ font-family: Verdana, Arial, Helvetica, sans-serif;
+ font-size: 20px;
+ margin-bottom: 0px;
+ text-decoration: underline;
+}
+
+h2 {
+ font-family: Verdana, Arial, Helvetica, sans-serif;
+ font-size: 20px;
+ text-decoration: underline;
+ margin-top: 30px;
+ color: #ACCEEB;
+}
+
+h3 {
+ font-family: Verdana, Arial, Helvetica, sans-serif;
+ font-size: 16px;
+ margin-bottom: 0px;
+}
+
+h4 {
+ font-family: Verdana, Arial, Helvetica, sans-serif;
+ font-size: 10px;
+ margin-top: 0px;
+}
+
+a {
+ color: white;
+}
+
+#content img {
+ border: 1px solid white;
+}
+
+.mistable {
+ margin-top: -10px;
+ font-family: Verdana, Arial, Helvetica, sans-serif;
+ font-size: 10px;
+}
+
+.mistable td {
+ padding-left: 10px;
+}
+
+.mistable .addons {
+ color: #E7D0D8;
+}
+
+.faq {
+ padding-left: 15px;
+}</style>
+<style>
+        .meta-extractor-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 10000;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            border: 1px solid #e0e0e0;
+        }
+
+        .meta-extractor-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(3px);
+            z-index: 9999;
+        }
+
+        .meta-extractor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .meta-extractor-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meta-extractor-close {
+            background: #f0f0f0;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+         }
+
+
+        .meta-extractor-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .meta-extractor-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .meta-extractor-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .meta-extractor-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-extractor-section-title svg {
+            color: #6c757d;
+        }
+
+        .meta-extractor-tags {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .meta-tag-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .meta-tag-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-tag-name svg {
+            color: #7f8c8d;
+        }
+
+        .meta-tag-value {
+            color: #34495e;
+            font-size: 13px;
+            line-height: 1.5;
+            word-break: break-word;
+            background: #f8f9fa;
+            padding: 8px 10px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .meta-tag-value.url {
+            color: #2980b9;
+        }
+
+        .meta-extractor-images {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .meta-image-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .meta-image-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .meta-image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 5px;
+            background: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .snapshot-loading-placeholder {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.snapshot-loading {
+    text-align: center;
+    color: #7f8c8d;
+    padding: 40px;
+}
+
+.snapshot-loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    border: 2px solid #3498db;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: snapshot-spin 1s linear infinite;
+}
+
+.snapshot-error {
+    padding: 40px;
+    text-align: center;
+    color: #e74c3c;
+    background: #fdf3f2;
+    border-radius: 8px;
+    border: 2px dashed #e74c3c;
+}
+
+        .meta-image-preview:hover {
+            transform: scale(1.02);
+            border-color: #3498db;
+        }
+
+        .meta-image-url {
+            margin-top: 12px;
+            color: #7f8c8d;
+            font-size: 12px;
+            word-break: break-all;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .snapshot-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .snapshot-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 5px;
+            background: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .snapshot-preview:hover {
+            transform: scale(1.02);
+            border-color: #3498db;
+        }
+
+        .snapshot-url {
+            margin-top: 12px;
+            color: #7f8c8d;
+            font-size: 12px;
+            word-break: break-all;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .snapshot-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .snapshot-size-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .snapshot-size-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .snapshot-size-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        .meta-extractor-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            justify-content: flex-end;
+        }
+
+        .meta-extractor-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-extractor-btn.copy {
+            background: #3498db;
+            color: white;
+        }
+
+        .meta-extractor-btn.copy:hover {
+            background: #2980b9;
+        }
+
+        .meta-extractor-btn.copied {
+            background: #27ae60;
+        }
+
+        .meta-extractor-btn.json {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .meta-extractor-btn.json:hover {
+            background: #27ae60;
+        }
+
+        .meta-extractor-btn.json-view {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .meta-extractor-btn.json-view:hover {
+            background: #8e44ad;
+        }
+
+        .no-image {
+            color: #95a5a6;
+            font-style: italic;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .copy-hint {
+            color: #7f8c8d;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .image-right-click-hint {
+            color: #e74c3c;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 8px;
+            font-weight: 500;
+            background: #fff5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .snapshot-loading {
+            padding: 40px;
+            text-align: center;
+            color: #7f8c8d;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .snapshot-loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            border: 2px solid #3498db;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: snapshot-spin 1s linear infinite;
+        }
+
+        @keyframes snapshot-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .snapshot-error {
+            padding: 40px;
+            text-align: center;
+            color: #e74c3c;
+            background: #fdf3f2;
+            border-radius: 8px;
+            border: 2px dashed #e74c3c;
+        }
+    </style><link rel="icon" href="data:image/vnd.microsoft.icon;base64,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" type="image/x-icon"><link rel="shortcut icon" href="data:image/vnd.microsoft.icon;base64,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"></head>
+<body>
+
+<!--NAVBAR START-->
+
+<div style="position: absolute;top: 0px;left: 0px;width: 100%;spacing: 0px;padding: 0px;margin: 0px;background: #666666;height: 17px;">
+<div style="line-height: 15px;position: absolute;top: 1px;left: 0px;width: 100%;padding-top: 0px;padding-bottom: 0px;spacing: 0px;margin: 0px;background: black; height: 15px;text-align: center;color: #666666;font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt;border: 0px;">
+	<a href="http://www.kegetys.fi" style="color: #eeeeee;text-decoration:none;letter-spacing: 0px;font-weight: normal;">index</a> - <a href="http://www.kegetys.fi/downloads" style="color: #eeeeee;text-decoration:none;letter-spacing: 0px;font-weight: normal;">downloads</a> - <a href="http://www.kegetys.fi/photos" style="color: #eeeeee;text-decoration:none;letter-spacing: 0px;font-weight: normal;">photos</a> - <a href="http://www.kegetys.fi/forum/index.php?board=1.0" style="color: #eeeeee;text-decoration:none;letter-spacing: 0px;font-weight: normal;">forum</a> - <a href="http://www.youtube.com/user/Kegetys" style="color: #eeeeee;text-decoration:none;letter-spacing: 0px;font-weight: normal;">youtube</a></div>
+</div>
+<!--NAVBAR END-->
+
+<span id="whiteline"></span>
+<span id="tausta1"></span>
+<div id="navi"><a href="index.php?p=addons">&nbsp;addons&nbsp;</a> <a href="index.php?p=missions">&nbsp;missions&nbsp;</a> <a href="index.php?p=others">&nbsp;others&nbsp;</a> <a href="index.php?p=faq">&nbsp;faq&nbsp;</a> <a href="index.php?p=links">&nbsp;links&nbsp;</a></div>
+
+<div id="content">
+<p>
+	
+</p><h1>Others</h1>
+
+
+
+<blockquote>
+<h3><a href="dxdll10.zip">DXDLL v1.0</a></h3>
+
+<p>
+	Adds reflective water, postprocessing effects, trilinear filtering<br>
+	and other new features to OFP. Use <a href="http://www.flashpoint1985.com/cgi-bin/ikonboard311/ikonboard.cgi?act=ST;f=4;t=40962">this thread</a> in the official<br>
+	OFP forums for troubleshooting.
+</p>
+<p>
+	A special <a href="dxdll10vbs.zip">version</a> for <a href="http://www.virtualbattlespace.com">VBS</a> is also available.
+</p>
+
+<h3><a href="spectatescript12.zip">Spectating Script v1.2</a></h3>
+
+<p>
+	A script for multiplayer mission designers which allows dead<br>
+	players to spectate others. Includes multiple camera angles with<br>
+	adjustable distance, easy to use interface and seagull mode.
+</p>
+<p>
+	The newest version is included in <a href="http://koti.mbnet.fi/fdfmod/">FDFmod</a>
+</p>
+
+<h3><a href="hisky10c.zip">Hisky v1.0c</a></h3>
+
+<p>
+	Adds new, higher resolution sky textures and improves the<br>
+	rainy weather texture and fog colors. Installer requires<br>
+	a Windows NT based operating system (ie. Windows 2000 or XP)
+</p>
+
+<h3><a href="linuxarch10.zip">Linuxarch v1.0</a></h3>
+
+<p>
+	Automatically packages files from a windows OFP installation<br>
+	into a TAR(.gz) archive, to be extracted on a linux system<br>
+	for dedicated server installation. Only a very minimal amount<br>
+	of files required by the dedicated server are packed, to make<br>
+	the package as small as possible.<br>
+</p>
+
+<h3><a href="launcher218.zip">OFP Launcher v2.18</a></h3>
+
+<p>
+	A Launcher for OFP, supporting mods, joining to multiplayer servers,<br>
+	querying servers and an automatic server watcher with a sound notification<br>
+	of new games.<br>
+</p>
+
+<h3><a href="TGA2ASE.zip">TGA2ASE v1.0</a></h3>
+
+<p>
+	Converts a TGA based "heightmap" image into ASE format, which can be<br>
+	imported into Visitor for easy terrain heightmap generation.
+</p>
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-3894532857266807";
+google_ad_width = 468;
+google_ad_height = 60;
+google_ad_format = "468x60_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+google_color_border = "6699CC";
+google_color_bg = "454B53";
+google_color_link = "FFFFFF";
+google_color_url = "EAF0F7";
+google_color_text = "FFFFFF";
+//--></script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+</blockquote>
+<br><br><br><br><p></p>
+</div>
+
+
+
+</body></html>
